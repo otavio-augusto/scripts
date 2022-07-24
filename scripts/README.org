@@ -1,0 +1,435 @@
+#+title: README
+Literate programming document for the script collection
+* Shared Components
+Utilizing the ~no-web~ syntax, we can save time by simply referencing the code rather than copying-pasting it.
+** Preamble
+#+NAME: preamble
+#+begin_src bash :noeval :exports code
+#!/usr/bin/env bash
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+#+end_src
+** Getopts
+By convention, the scripts used here utilize no flags, such that this code block alone can supply a ~getopts~ iterator.
+If for any reason a script needs to use flags, this block will simply be omitted, and the iterator will be hard-coded.
+#+NAME: getopts
+#+begin_src bash :noeval :exports code
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+#+end_src
+
+* Scripts
+** DONE cheat
+#+NAME: cheat
+#+begin_src bash :exports code :tangle cheat :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple script to curl from cheat.sh"
+    echo
+    echo "usage: cheat [OPTION] [COMMAND]"
+    exit 0
+}
+
+cheat()
+{
+    if [ ! -z "$1" ]; then
+        curl -s http://cheat.sh/$1
+        exit 0
+    fi
+    help
+}
+
+<<getopts>>
+
+cheat "$1"
+#+end_src
+** TODO convert
+#+NAME: convert
+#+begin_src bash :exports code :tangle convert :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "an attempt at create a command-line docverter wrapper"
+    echo
+    echo "usage convert [ORIGINAL] [TARGET]"
+    exit 0
+}
+
+<<getopts>>
+
+FILE=$1
+EXT="${FILE#*.}"
+curl "http://c.docverter.com/convert" -F from=$EXT -F to=$2 -F "input_files[]=@$FILE" -o "resultado.$2"
+#+end_src
+** DONE epdfinfo
+#+NAME: epdfinfo
+#+begin_src bash :exports code :tangle epdfinfo :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple helper for installing and updating epdinfo"
+    echo
+    echo "usage epdfinfo.sh [OPTIONS]"
+    exit 0
+}
+
+update()
+{
+    cd ~/.emacs.d/.local/straight
+    CURRENT=$(ls -d build*/ | tail -n 1)
+    ~/.emacs.d/.local/straight/${CURRENT}pdf-tools/build/server/autobuild -i ~/.emacs.d/.local/straight/${CURRENT}pdf-tools/
+}
+
+<<getopts>>
+
+update
+#+end_src
+** DONE font
+#+NAME: font
+#+begin_src bash :exports code :tangle font :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a suckless solution for font management"
+    echo
+    echo "usage: font.sh [OPTION] [FILE]"
+    echo "options:"
+    echo "h     print this page"
+    echo "i     install a font from a file"
+    exit 0
+}
+
+install()
+{
+    if [ $1 != *.ttf ]; then
+        echo "invalid file: file must be .tff"
+        exit 0
+    fi
+    echo "copying file to /usr/share/bin/$1..."
+    sudo cp $1 /tmp/$1
+    echo "updating font cache with [fc-cache -f -v]..."
+    fc-cache -f -v > /dev/null
+    echo "font installation completed"
+    exit 0
+}
+
+if [ $# -eq 0 ]; then
+    help
+    exit 0
+fi
+
+<<getopts>>
+
+install $FONT
+#+end_src
+** DONE mute
+#+NAME: mute
+#+begin_src bash :exports code :tangle mute :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple script to mute and unmute a microphone"
+    echo
+    echo "usage: mute"
+    exit 0
+}
+
+toggle()
+{
+    ID=$(pactl list short | grep "easyeffects_source" | awk '{print $1;}')
+    STATUS=$(pactl get-source-mute "$ID")
+    if [ "$STATUS" == 'Mute: yes' ]; then
+        notify-send -t 5000 "Microphone ON"
+    else
+        notify-send -t 5000 "Microphone OFF"
+    fi
+    pactl set-source-mute "$ID" toggle
+}
+
+<<getopts>>
+
+toggle
+#+end_src
+** DONE pick
+#+NAME: pick
+#+begin_src bash :exports code :tangle pick :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple colorpicker script that uses grabc"
+    echo
+    echo "usage: pick"
+    exit 0
+}
+
+pick()
+{
+    COLOR=$(grabc)
+    echo "$COLOR" | xclip -sel clipboard
+    notify-send -t 5000 "HEX: $COLOR"
+}
+
+<<getopts>>
+
+pick
+#+end_src
+** TODO pomodoro
+#+NAME: pomodoro
+#+begin_src bash :exports code :tangle pomodoro :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a WIP Pomodoro timer"
+    echo
+    echo "usage: WIP"
+    exit 0
+}
+
+<<getopts>>
+
+for i in {1..${1:-1}}
+do
+    sleep ${2:-25m}
+    notify-send "Time to Rest\!"
+    sleep ${3:-5m}
+    notify-send "Time to Work\!"
+done
+
+#+end_src
+** DONE qrcode
+#+NAME: qrcode
+#+begin_src bash :exports code :tangle qrcode :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a wrapper for qr-encode"
+    echo
+    echo "usage: qrcode [INPUT]"
+    exit 0
+}
+
+<<getopts>>
+
+echo $1 | curl -F-=\<- qrenco.de
+#+end_src
+** TODO rate
+#+NAME: rate
+#+begin_src bash :exports code :tangle rate :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple wrapper for rate.sx"
+    echo
+    echo "usage: rate.sx [ASSET]"
+    exit 0
+}
+
+<<getopts>>
+
+curl -s http://brl.rate.sx/$1?lang=pt-br | head -n -2 | tail -n +6
+#+end_src
+** DONE resize
+#+NAME: resize
+#+begin_src bash :exports code :tangle resize :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple script to resize bspwm windows"
+	echo "shamelessly stolen from Protesilaos Stavrou"
+    echo
+    echo "usage: resize [MOTION] [DIRECTION] [AMOUNT]"
+	echo "motion: expand, retract"
+	echo "directions: north, east, south, west"
+	echo "amount: any intiger"
+    exit 0
+}
+
+<<getopts>>
+
+[ "$#" -eq 3 ] || { echo "Needs exactly three arguments."; exit 1; }
+
+motion="$1"
+direction="$2"
+size="$3"
+
+if [ "$motion" = 'expand' ]; then
+	# These expand the window's given side
+	case "$direction" in
+		north) bspc node -z top 0 -"$size" ;;
+		east) bspc node -z right "$size" 0 ;;
+		south) bspc node -z bottom 0 "$size" ;;
+		west) bspc node -z left -"$size" 0 ;;
+	esac
+else
+	# These contract the window's given side
+	case "$direction" in
+		north) bspc node -z top 0 "$size" ;;
+		east) bspc node -z right -"$size" 0 ;;
+		south) bspc node -z bottom 0 -"$size" ;;
+		west) bspc node -z left "$size" 0 ;;
+	esac
+fi
+#+end_src
+** DONE timer
+#+NAME: timer
+#+begin_src bash :exports code :tangle timer :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple script to curl from wttr.in"
+    echo
+    echo "usage: wttr.sh [LOCATION]"
+    exit 0
+}
+
+<<getopts>>
+
+for i in `seq ${VARIABLE:-1}`; do
+  notify-send "Timer Set"
+  sleep ${VARIABLE:-2500}
+  notify-send "Timer End"
+done
+#+end_src
+** DONE tzone
+#+NAME: tzone
+#+begin_src bash :exports code :tangle tzone :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple timezone converter"
+    echo
+    echo "usage: tzone [TIME]"
+    echo "[TIME] e.g. 1630 is OPTIONAL"
+    exit 0
+}
+
+getTime()
+{
+    GMT=$(date -d $1 +"%T")
+    PST=$(date +"%T" -d "$1 -4 hours")
+    printf "São Paulo    \t GMT-3 \t $GMT \n"
+    printf "Pacific Time \t PST   \t $PST \n"
+}
+
+<<getopts>>
+
+if [ $# -eq 0 ]; then
+    NOW=$(date +"%T")
+    getTime $NOW
+    exit 0
+else
+    getTime $1
+    exit 0
+fi
+
+getTime | column -t -s $'\t'
+#+end_src
+** DONE upload
+#+NAME: upload
+#+begin_src bash :exports code :tangle upload :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple wrapper for transfer.sh"
+    echo
+    echo "usage: upload [FILE]"
+    exit 0
+}
+
+<<getopts>>
+
+URL=$(curl --upload-file $1 https://transfer.sh/$1) &&
+echo $URL | xclip -sel clip &&
+echo $URL
+#+end_src
+** DONE volume
+#+NAME: volume
+#+begin_src bash :exports code :tangle volume :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple script to curl from wttr.in"
+    echo
+    echo "usage: wttr.sh [LOCATION]"
+    exit 0
+}
+
+getDefaultSink() {
+    defaultSink=$(pactl info | awk -F : '/Default Sink:/{print $2}')
+    description=$(pactl list sinks | sed -n "/${defaultSink}/,/Description/p; /Description/q" | sed -n 's/^.*Description: \(.*\)$/\1/p')
+}
+
+getDefaultSource() {
+    defaultSource=$(pactl info | awk -F : '/Default Source:/{print $2}')
+    description=$(pactl list sources | sed -n "/${defaultSource}/,/Description/p; /Description/q" | sed -n 's/^.*Description: \(.*\)$/\1/p')
+}
+
+VOLUME=$(pamixer --get-volume-human)
+SINK=$(getDefaultSink)
+SOURCE=$(getDefaultSource)
+
+<<getopts>>
+
+case $1 in
+    "--up")
+        pamixer --increase 5;;
+    "--down")
+        pamixer --decrease 5;;
+    "--mute")
+        pamixer --toggle-mute;;
+    ,*)
+        echo "${VOLUME}"
+esac
+#+end_src
+** DONE wttr
+#+NAME: wttr
+#+begin_src bash :exports code :tangle wttr :noweb yes
+<<preamble>>
+
+help()
+{
+    echo "a simple script to curl from wttr.in"
+    echo
+    echo "usage: wttr.sh [LOCATION]"
+    exit 0
+}
+
+weather()
+{
+    curl -s http://wttr.in/$1?lang=pt-br | head -n -1
+}
+
+<<getopts>>
+
+weather "${1-Contagem}"
+#+end_src
+
+* Miscellaneous
+** Recursive ~chmod +x~
+Run this every time a new script is added to make sure its executable:
+#+begin_src bash
+ls . | grep -v \\. | xargs chmod +x
+#+end_src

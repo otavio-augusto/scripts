@@ -116,16 +116,26 @@ usage: wttr.sh [LOCATION]
 - [ ] Finish scripts marked as WIP
 - [ ] Format ~help()~ functions to output in accordance with manpage guidelines
 - [ ] Create a proper package for installation
-- [ ] Utilize ~org-babel~'s ~no-web~ syntax to write shared script components
-  - [ ] Move scripts into a subfolder
-  - [ ] Create a literate README.org for the new subfolder
+- [X] Utilize ~org-babel~'s ~no-web~ syntax to write shared script components
+  - [X] Move scripts into a sub-folder
+  - [X] Create a literate README.org for the new sub-folder
+
+* Miscellaneous
+Since several parts of my OS reference the scripts as if they were in the root of the project, I've created this script to create symbolic links.
+#+begin_src bash
+SCRIPTS=$(ls scripts/ | grep -v \\.)
+for item in $SCRIPTS; do
+    ln scripts/$item $item
+done
+#+end_src
 
 * COMMENT Metadata
 #+options: toc:nil author:nil
 * COMMENT Functions
 #+NAME: document
 #+begin_src bash :exports results :results drawer
-SCRIPTS=$(ls | grep -v \\.)
+cd scripts/
+SCRIPTS=$(ls . | grep -v \\.)
 for item in $SCRIPTS; do
     printf " - $item\n"
     printf "#+begin_example\n$(eval ./$item -h)\n#+end_example\n"
