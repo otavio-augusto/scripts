@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a WIP Pomodoro timer"
+    echo
+    echo "usage: WIP"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+for i in {1..${1:-1}}
+do 
+    sleep ${2:-25m}
+    notify-send "Time to Rest\!"
+    sleep ${3:-5m}
+    notify-send "Time to Work\!"
+done
+

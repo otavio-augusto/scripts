@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a simple colorpicker script that uses grabc"
+    echo
+    echo "usage: pick"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+pick()
+{
+    COLOR=$(grabc)
+    echo "$COLOR" | xclip -sel clipboard
+    notify-send -t 5000 "HEX: $COLOR"
+}
+
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+pick

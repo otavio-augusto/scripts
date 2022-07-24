@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a simple script to curl from wttr.in"
+    echo
+    echo "usage: wttr.sh [LOCATION]"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+weather()
+{
+    curl -s http://wttr.in/$1?lang=pt-br | head -n -1
+}
+
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+weather "${1-Contagem}"

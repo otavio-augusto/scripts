@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a simple helper for installing and updating epdinfo"
+    echo
+    echo "usage epdfinfo.sh [OPTIONS]"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+update()
+{
+    cd ~/.emacs.d/.local/straight
+    CURRENT=$(ls -d build*/ | tail -n 1)
+    ~/.emacs.d/.local/straight/${CURRENT}pdf-tools/build/server/autobuild -i ~/.emacs.d/.local/straight/${CURRENT}pdf-tools/
+}
+
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+update

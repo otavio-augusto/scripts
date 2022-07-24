@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a simple timezone converter"
+    echo
+    echo "usage: tzone [TIME]"
+    echo "[TIME] e.g. 1630 is OPTIONAL"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+getTime()
+{
+    GMT=$(date -d $1 +"%T")
+    PST=$(date +"%T" -d "$1 -4 hours")
+    printf "São Paulo    \t GMT-3 \t $GMT \n"
+    printf "Pacific Time \t PST   \t $PST \n"
+}
+
+while getopts "h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+if [ $# -eq 0 ]; then
+    NOW=$(date +"%T")
+    getTime $NOW
+    exit 0
+else
+    getTime $1
+    exit 0
+fi
+
+getTime | column -t -s $'\t'

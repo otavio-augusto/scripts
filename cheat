@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a simple script to curl from cheat.sh"
+    echo
+    echo "usage: cheat [OPTION] [COMMAND]"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+cheat()
+{
+    if [ ! -z "$1" ]; then
+        curl -s http://cheat.sh/$1
+        exit 0
+    fi
+    help
+}
+
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+cheat "$1"

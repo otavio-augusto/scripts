@@ -1,0 +1,125 @@
+#+title: A collection of useful bash scripts
+#+begin_src bash :exports results :results drawer
+COUNT=$(ls | grep -v \\. | wc -l)
+echo "Currently ~$COUNT~ scripts, and counting."
+#+end_src
+#+RESULTS:
+:results:
+Currently ~15~ scripts, and counting.
+:end:
+
+Also of note, this is a self-documenting repository, meaning every time another script is added, and a help function is created, this document will expand itself automaticaly.
+#+CALL: document()
+#+RESULTS:
+:results:
+ - cheat
+#+begin_example
+a simple script to curl from cheat.sh
+
+usage: cheat [OPTION] [COMMAND]
+#+end_example
+ - convert
+#+begin_example
+an attempt at create a command-line docverter wrapper
+
+usage convert [ORIGINAL] [TARGET]
+#+end_example
+ - epdfinfo
+#+begin_example
+a simple helper for installing and updating epdinfo
+
+usage epdfinfo.sh [OPTIONS]
+#+end_example
+ - font
+#+begin_example
+a suckless solution for font management
+
+usage: font.sh [OPTION] [FILE]
+options:
+h     print this page
+i     install a font from a file
+#+end_example
+ - mute
+#+begin_example
+a simple script to mute and unmute a microphone
+
+usage: mute
+#+end_example
+ - pick
+#+begin_example
+a simple colorpicker script that uses grabc
+
+usage: pick
+#+end_example
+ - pomodoro
+#+begin_example
+a WIP Pomodoro timer
+
+usage: WIP
+#+end_example
+ - qrcode
+#+begin_example
+a wrapper for qr-encode
+
+usage: qrcode [INPUT]
+#+end_example
+ - rate
+#+begin_example
+a simple wrapper for rate.sx
+
+usage: rate.sx [ASSET]
+#+end_example
+ - resize
+#+begin_example
+a simple script to resize bspwm windows
+shamelessly stolen from Protesilaos Stavrou
+
+usage: resize [MOTION] [DIRECTION] [AMOUNT]
+motion: expand, retract
+directions: north, east, south, west
+amount: any intiger
+#+end_example
+ - timer
+#+begin_example
+a simple script to curl from wttr.in
+
+usage: wttr.sh [LOCATION]
+#+end_example
+ - tzone
+#+begin_example
+a simple timezone converter
+
+usage: tzone [TIME]
+[TIME] e.g. 1630 is OPTIONAL
+#+end_example
+ - upload
+#+begin_example
+a simple wrapper for transfer.sh
+
+usage: upload [FILE]
+#+end_example
+ - volume
+#+begin_example
+a simple script to curl from wttr.in
+
+usage: wttr.sh [LOCATION]
+#+end_example
+ - wttr
+#+begin_example
+a simple script to curl from wttr.in
+
+usage: wttr.sh [LOCATION]
+#+end_example
+:end:
+
+* COMMENT Metadata
+#+options: toc:nil author:nil
+* COMMENT Functions
+#+NAME: document
+#+begin_src bash :exports results :results drawer
+SCRIPTS=$(ls | grep -v \\.)
+for item in $SCRIPTS; do
+    printf " - $item\n"
+    printf "#+begin_example\n$(eval ./$item -h)\n#+end_example\n"
+done
+#+end_src

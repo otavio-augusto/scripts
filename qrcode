@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a wrapper for qr-encode"
+    echo
+    echo "usage: qrcode [INPUT]"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+echo $1 | curl -F-=\<- qrenco.de

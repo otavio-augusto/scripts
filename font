@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a suckless solution for font management"
+    echo
+    echo "usage: font.sh [OPTION] [FILE]"
+    echo "options:"
+    echo "h     print this page"
+    echo "i     install a font from a file"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+install()
+{
+    if [ $1 != *.ttf ]; then
+        echo "invalid file: file must be .tff"
+        exit 0
+    fi
+    echo "copying file to /usr/share/bin/$1..."
+    sudo cp $1 /tmp/$1
+    echo "updating font cache with [fc-cache -f -v]..."
+    fc-cache -f -v > /dev/null
+    echo "font installation completed"
+    exit 0
+}
+
+if [ $# -eq 0 ]; then
+    help
+    exit 0
+fi
+
+while getopts "hi:" opt; do
+    case $opt in
+        h) help;;
+        i) FONT=$OPTARG;;
+        ?) invalid;;
+    esac
+done
+
+install $FONT

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+help()
+{
+    echo "a simple wrapper for transfer.sh"
+    echo
+    echo "usage: upload [FILE]"
+    exit 0
+}
+
+invalid()
+{
+    echo "invalid option, refer to -h"
+    exit 0
+}
+
+while getopts ":h" opt; do
+    case $opt in
+        h) help;;
+        ?) invalid;;
+    esac
+done
+
+URL=$(curl --upload-file $1 https://transfer.sh/$1) && 
+echo $URL | xclip -sel clip &&
+echo $URL
