@@ -8,7 +8,7 @@ echo "Currently ~$COUNT~ scripts, and counting."
 Currently ~15~ scripts, and counting.
 :end:
 
-Also of note, this is a self-documenting repository, meaning every time another script is added, and a help function is created, this document will expand itself automaticaly.
+Also of note, this is a self-documenting repository, meaning every time another script is added, and a help function is created, this document will expand itself automatically.
 #+CALL: document()
 #+RESULTS:
 :results:
@@ -117,6 +117,8 @@ usage: wttr.sh [LOCATION]
 - [ ] Format ~help()~ functions to output in accordance with manpage guidelines
 - [ ] Create a proper package for installation
 - [ ] Utilize ~org-babel~'s ~no-web~ syntax to write shared script components
+  - [ ] Move scripts into a subfolder
+  - [ ] Create a literate README.org for the new subfolder
 
 * COMMENT Metadata
 #+options: toc:nil author:nil
