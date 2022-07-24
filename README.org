@@ -112,6 +112,12 @@ usage: wttr.sh [LOCATION]
 #+end_example
 :end:
 
+* Roadmap
+- [ ] Finish scripts marked as WIP
+- [ ] Format ~help()~ functions to output in accordance with manpage guidelines
+- [ ] Create a proper package for installation
+- [ ] Utilize ~org-babel~'s ~no-web~ syntax to write shared script components
+
 * COMMENT Metadata
 #+options: toc:nil author:nil
 * COMMENT Functions
