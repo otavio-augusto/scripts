@@ -28,13 +28,6 @@ VOLUME=$(pamixer --get-volume-human)
 SINK=$(getDefaultSink)
 SOURCE=$(getDefaultSource)
 
-while getopts ":h" opt; do
-    case $opt in
-        h) help;;
-        ?) invalid;;
-    esac
-done
-
 case $1 in
     "--up")
         pamixer --increase 5;;
@@ -42,6 +35,7 @@ case $1 in
         pamixer --decrease 5;;
     "--mute")
         pamixer --toggle-mute;;
-    *)
-        echo "${VOLUME}"
+    "-h")
+	help;;
 esac
+echo "${VOLUME}"
