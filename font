@@ -23,8 +23,8 @@ install()
         echo "invalid file: file must be .tff"
         exit 0
     fi
-    echo "copying file to /usr/share/bin/$1..."
-    sudo cp $1 /tmp/$1
+    echo "copying file to /usr/share/fonts/..."
+    sudo mv $1 /usr/share/fonts/TTF/$1
     echo "updating font cache with [fc-cache -f -v]..."
     fc-cache -f -v > /dev/null
     echo "font installation completed"
@@ -43,4 +43,4 @@ while getopts ":h" opt; do
     esac
 done
 
-install $FONT
+install $1
